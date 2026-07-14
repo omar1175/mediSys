@@ -1,0 +1,2069 @@
+{
+  "item": [
+    {
+      "id": "05a224ff-c2e1-4ce8-9aac-506277e79c23",
+      "name": "Auth",
+      "description": {
+        "content": "Authentication & user profile endpoints",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "4f698f30-f1bc-4b57-8da4-b1c338f5db4b",
+          "name": "Register",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "register",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"johndoe\",\n  \"email\": \"johndoe@example.com\",\n  \"password\": \"StrongPass123!\",\n  \"password2\": \"StrongPass123!\",\n  \"role\": \"PATIENT\",\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\"\n}"
+            }
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "77c6f743-2146-4f57-bb1e-d336af2e5678",
+          "name": "Login",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"johndoe\",\n  \"password\": \"StrongPass123!\"\n}"
+            }
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "47ce4b1c-ceac-4470-95bf-c5f83ef50443",
+          "name": "Refresh Token",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "refresh",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}"
+            }
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "ed08d097-854f-404a-9edb-1763af0f9361",
+          "name": "Get My Profile",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "me",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET"
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "af0231a5-0f8b-450b-aa36-ee161e2de567",
+          "name": "Update My Profile",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "me",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "PATCH",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"John\",\n  \"last_name\": \"Smith\"\n}"
+            }
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "d844ccb8-7752-433b-a861-0b3324fac1f5",
+          "name": "Change Password",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "change-password",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"old_password\": \"StrongPass123!\",\n  \"new_password\": \"NewStrongPass456!\"\n}"
+            }
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "5fd6ca19-a097-4a3e-86a6-b519d1afb6ed",
+          "name": "Confirm Email (GET)",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "confirm-email",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": [
+                    {
+                      "key": "uid",
+                      "value": "<uid>"
+                    },
+                    {
+                      "key": "token",
+                      "value": "<token>"
+                    }
+                  ]
+                },
+                {
+                  "key": "reference",
+                  "value": {
+                    "uid": {
+                      "key": "uid",
+                      "value": "<uid>"
+                    },
+                    "token": {
+                      "key": "token",
+                      "value": "<token>"
+                    }
+                  }
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET"
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "370fc2a8-788e-45ce-a0a6-308ddddf71bd",
+          "name": "Confirm Email (POST)",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "confirm-email",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"uid\": \"<uid>\",\n  \"token\": \"<token>\"\n}"
+            }
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "bc8a9f38-91b0-4158-ab4d-ffbf76b35a2e",
+          "name": "Resend Confirmation Email",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "resend-email",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"johndoe@example.com\"\n}"
+            }
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "cc16e086-2575-409b-b302-013ebc367193",
+          "name": "Request Password Reset",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "password-reset",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"johndoe@example.com\"\n}"
+            }
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "c25825e8-802b-492f-bfc3-8b9da533204f",
+          "name": "Confirm Password Reset",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "password-reset-confirm",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"uid\": \"<uid>\",\n  \"token\": \"<token>\",\n  \"new_password\": \"NewStrongPass456!\"\n}"
+            }
+          },
+          "response": [],
+          "event": []
+        }
+      ],
+      "event": []
+    },
+    {
+      "id": "51f942bd-54c5-4575-850c-0b842e4eb932",
+      "name": "Users",
+      "description": {
+        "content": "Admin-only user management",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "337cf7a1-be68-4f9c-b920-16d568b6a7c5",
+          "name": "List Users",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "users",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET"
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "20c33de3-ea07-4e1a-b89e-e54413db2503",
+          "name": "Retrieve User",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "1",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET"
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "9689784d-ced6-4240-9735-4f26f43a2f71",
+          "name": "Update User",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "1",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "PATCH",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_active\": true,\n  \"first_name\": \"Updated\",\n  \"last_name\": \"Name\"\n}"
+            }
+          },
+          "response": [],
+          "event": []
+        }
+      ],
+      "event": []
+    },
+    {
+      "id": "77cde022-8856-4296-b648-24a068964289",
+      "name": "Specialties",
+      "description": {
+        "content": "Medical specialties management",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "8c8a157d-4949-4537-ba33-e5b2f7d91e07",
+          "name": "List Specialties",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "specialties",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET"
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "dbc24568-4c5d-4b1f-9d48-cf024931733d",
+          "name": "Create Specialty",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "specialties",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cardiology\",\n  \"description\": \"Heart and cardiovascular system\"\n}"
+            }
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "ad3d9ce5-f996-4f0c-b83e-fffefc87b6db",
+          "name": "Retrieve Specialty",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "specialties",
+                "cardiology",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET"
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "3ab77f3b-1c83-4631-9ae4-188dd5536d98",
+          "name": "Update Specialty",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "specialties",
+                "cardiology",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "PATCH",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated description for cardiology\"\n}"
+            }
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "1cdfd427-8320-4c32-a171-9d3dcd0cef40",
+          "name": "Delete Specialty",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "specialties",
+                "cardiology",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "DELETE"
+          },
+          "response": [],
+          "event": []
+        }
+      ],
+      "event": []
+    },
+    {
+      "id": "c6bbb41c-bab9-4866-b646-745ba56e4cf2",
+      "name": "Doctors",
+      "description": {
+        "content": "Doctor profiles",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "7f9c39a7-08b4-44ae-81a7-243ff9f65d6a",
+          "name": "List Doctors",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "doctors",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET"
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "527110c9-c137-46e8-bd0a-6ad2ce63bdc3",
+          "name": "Create Doctor Profile",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "doctors",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"specialty\": 1,\n  \"bio\": \"Experienced cardiologist with 10 years of practice.\",\n  \"phone\": \"+1234567890\",\n  \"consultation_fee\": 150\n}"
+            }
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "498f6430-b3ec-4ee1-a8d4-ac5115202bb7",
+          "name": "Get My Doctor Profile",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "doctors",
+                "me",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET"
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "6b348fa7-e6d6-4abd-9136-45752ff33c0f",
+          "name": "Update My Doctor Profile",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "doctors",
+                "me",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "PATCH",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bio\": \"Updated bio information.\",\n  \"consultation_fee\": 200\n}"
+            }
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "2c394f97-64b4-4858-a806-39c44c29f5ab",
+          "name": "Retrieve Doctor",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "doctors",
+                "1",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET"
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "67d55458-d015-41b0-af21-ec82c58bd209",
+          "name": "Update Doctor",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "doctors",
+                "1",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "PATCH",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"consultation_fee\": 175,\n  \"bio\": \"Updated doctor bio.\"\n}"
+            }
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "4bb302e2-4511-42d7-9b7f-00d9ffbb7b6f",
+          "name": "Delete Doctor",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "doctors",
+                "1",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "DELETE"
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "17cb700c-517a-4e54-a5f8-d056ece9e2d3",
+          "name": "Approve Doctor",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "doctors",
+                "1",
+                "approve",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "PATCH",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_approved\": true\n}"
+            }
+          },
+          "response": [],
+          "event": []
+        }
+      ],
+      "event": []
+    },
+    {
+      "id": "da6587b6-5689-4c67-9b31-06b2eec8c257",
+      "name": "Availability",
+      "description": {
+        "content": "Doctor availability slots\nDay: 0=Mon..6=Sun",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "b144164c-9607-49f0-8178-02f1505e3956",
+          "name": "List Availability",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "availability",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET"
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "33c9e9bb-c784-4cf3-9120-90c3870bb956",
+          "name": "Create Availability Slot",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "availability",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"day_of_week\": 1,\n  \"start_time\": \"09:00:00\",\n  \"end_time\": \"17:00:00\",\n  \"is_active\": true\n}"
+            }
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "822d4d75-b7a7-4d3f-ac36-a78512a1fdbc",
+          "name": "Retrieve Availability Slot",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "availability",
+                "1",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET"
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "7f80efd2-1d0a-4bcc-89f7-8e1c2355a68e",
+          "name": "Update Availability Slot",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "availability",
+                "1",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "PATCH",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"start_time\": \"10:00:00\",\n  \"end_time\": \"16:00:00\"\n}"
+            }
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "bb49f5fa-5560-47da-a46b-8d01303f158c",
+          "name": "Delete Availability Slot",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "availability",
+                "1",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "DELETE"
+          },
+          "response": [],
+          "event": []
+        }
+      ],
+      "event": []
+    },
+    {
+      "id": "0df3491f-00f0-498c-a25f-213816894627",
+      "name": "Appointments",
+      "description": {
+        "content": "Appointment management",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "35b33c26-a187-4a6d-8e86-0e267abecf0c",
+          "name": "List Appointments",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "appointments",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET"
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "770998d8-b5d9-42c9-890c-e61a4d3f07db",
+          "name": "Create Appointment",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "appointments",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"doctor\": 1,\n  \"specialty\": 1,\n  \"scheduled_at\": \"2026-07-20T10:00:00Z\",\n  \"duration_minutes\": 30,\n  \"notes\": \"Annual checkup\"\n}"
+            }
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "4d2c6e55-6d41-4cbf-af95-7e97c587bd8f",
+          "name": "Retrieve Appointment",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "appointments",
+                "1",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET"
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "6aec9577-32c0-4565-90e1-4704edb43c2c",
+          "name": "Update Appointment",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "appointments",
+                "1",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "PATCH",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notes\": \"Updated notes for the appointment\"\n}"
+            }
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "e3f5261f-b16a-41d0-b129-538c927f547c",
+          "name": "Delete Appointment",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "appointments",
+                "1",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "DELETE"
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "3119b8fa-8344-467a-9cec-e8de27304aa2",
+          "name": "Update Appointment Status",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "appointments",
+                "1",
+                "update_status",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CONFIRMED\",\n  \"notes\": \"Confirmed by doctor\"\n}"
+            }
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "4eadd1d7-6ce8-4726-91ae-cdb388040fb7",
+          "name": "Reschedule Appointment",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "appointments",
+                "1",
+                "reschedule",
+                ""
+              ],
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "members",
+                  "value": []
+                },
+                {
+                  "key": "reference",
+                  "value": {}
+                },
+                {
+                  "key": "Type",
+                  "value": {
+                    "_postman_propertyName": "QueryParam",
+                    "_postman_propertyIndexKey": "key",
+                    "_postman_propertyAllowsMultipleValues": true
+                  }
+                },
+                {
+                  "key": "_postman_listIndexKey",
+                  "value": "key"
+                },
+                {
+                  "key": "_postman_listAllowsMultipleValues",
+                  "value": true
+                }
+              ],
+              "variable": []
+            },
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"scheduled_at\": \"2026-07-21T14:00:00Z\",\n  \"duration_minutes\": 45\n}"
+            }
+          },
+          "response": [],
+          "event": []
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "http://localhost:8000",
+      "key": "base_url"
+    },
+    {
+      "type": "string",
+      "value": "",
+      "key": "access_token"
+    },
+    {
+      "type": "string",
+      "value": "",
+      "key": "refresh_token"
+    }
+  ],
+  "info": {
+    "_postman_id": "0e55f2a6-7ec3-4d59-9964-41995352c562",
+    "name": "MediSys API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "MediSys Medical Appointment Booking System API\n\n## Authentication Flow\n1. **Register** a new account\n2. **Confirm Email** (check server logs for confirmation link)\n3. **Login** — access & refresh tokens auto-save to collection variables\n4. Call any authenticated endpoint\n\nAccess token expires in **60 min**. Use **Refresh Token** to get a new one.\n\nSet `base_url` collection variable (default: http://localhost:8000)",
+      "type": "text/plain"
+    }
+  }
+}
