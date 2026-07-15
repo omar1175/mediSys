@@ -221,6 +221,36 @@ class PasswordResetRequestView(APIView):
         return Response({"detail": "If the account exists, a password reset email was sent."})
 
 
+class BlockUserView(APIView):
+    """Admin-only endpoint to block (deactivate) a user account."""
+
+    permission_classes = [permissions.IsAuthenticated, IsAdminRole]
+
+    def post(self, request, pk):
+        try:
+            user = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+        user.is_active = False
+        user.save(update_fields=["is_active"])
+        return Response({"detail": f"User {user.username} has been blocked."})
+
+
+class UnblockUserView(APIView):
+    """Admin-only endpoint to unblock (reactivate) a user account."""
+
+    permission_classes = [permissions.IsAuthenticated, IsAdminRole]
+
+    def post(self, request, pk):
+        try:
+            user = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+        user.is_active = True
+        user.save(update_fields=["is_active"])
+        return Response({"detail": f"User {user.username} has been unblocked."})
+
+
 class PasswordResetConfirmView(APIView):
     """Set a new password using the uid + token from the email link."""
 

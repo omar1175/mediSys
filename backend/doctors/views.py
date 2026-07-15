@@ -45,6 +45,10 @@ class DoctorProfileViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ["list", "retrieve"]:
             return [permissions.AllowAny()]
+        # Admin-only for write operations — prevents non-admin users from creating,
+        # updating, or deleting doctor profiles.
+        if self.action in ["create", "update", "partial_update", "destroy"]:
+            return [permissions.IsAuthenticated(), IsAdminRole()]
         return [permissions.IsAuthenticated()]
 
     @action(detail=False, methods=["get", "patch"], permission_classes=[permissions.IsAuthenticated])
