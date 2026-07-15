@@ -2,7 +2,8 @@ import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Box, Typography, Card, CardContent, Avatar, Chip, IconButton,
-  Tooltip, Divider, Grid,
+  Tooltip, Divider, Grid, TextField, Dialog, DialogTitle,
+  DialogContent, DialogActions, Button,
 } from "@mui/material";
 import {
   CheckCircle, Cancel, Done, Event, Pending, Schedule,
@@ -10,7 +11,6 @@ import {
 import {
   fetchAppointments, confirmAppointment, completeAppointment, cancelAppointment,
 } from "../../store/slices/appointmentsSlice";
-import ConfirmDialog from "../../components/common/ConfirmDialog";
 import AlertSnackbar from "../../components/common/AlertSnackbar";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import dayjs from "dayjs";
@@ -25,7 +25,9 @@ const STAT_CARDS = [
 export default function DoctorAppointmentsPage() {
   const dispatch = useDispatch();
   const { list: appointments, loading } = useSelector((s) => s.appointments);
-  const [confirmAction, setConfirmAction] = useState(null);
+  const [actionNotes, setActionNotes] = useState("");
+  const [notesDialogOpen, setNotesDialogOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState(null);
   const [snack, setSnack] = useState({ open: false, msg: "", severity: "success" });
 
   useEffect(() => {
@@ -59,16 +61,23 @@ export default function DoctorAppointmentsPage() {
     [appointments]
   );
 
-  const executeAction = async () => {
-    if (!confirmAction) return;
-    const { fn, id, label } = confirmAction;
-    const result = await dispatch(fn(id));
+  const openNotesDialog = (fn, id, label) => {
+    setPendingAction({ fn, id, label });
+    setActionNotes("");
+    setNotesDialogOpen(true);
+  };
+
+  const executeConfirmedAction = async () => {
+    if (!pendingAction) return;
+    const { fn, id, label } = pendingAction;
+    const result = await dispatch(fn({ id, notes: actionNotes }));
     if (!result.error) {
       setSnack({ open: true, msg: `${label} successfully.`, severity: "success" });
     } else {
       setSnack({ open: true, msg: `Failed to ${label.toLowerCase()}.`, severity: "error" });
     }
-    setConfirmAction(null);
+    setNotesDialogOpen(false);
+    setPendingAction(null);
   };
 
   const statusColor = (s) => {
@@ -105,12 +114,12 @@ export default function DoctorAppointmentsPage() {
             {a.status === "PENDING" && (
               <>
                 <Tooltip title="Confirm">
-                  <IconButton color="success" size="small" onClick={() => setConfirmAction({ fn: confirmAppointment, id: a.id, label: "Appointment confirmed" })}>
+                  <IconButton color="success" size="small" onClick={() => openNotesDialog(confirmAppointment, a.id, "Appointment confirmed")}>
                     <CheckCircle fontSize="small" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Reject">
-                  <IconButton color="error" size="small" onClick={() => setConfirmAction({ fn: cancelAppointment, id: a.id, label: "Appointment rejected" })}>
+                  <IconButton color="error" size="small" onClick={() => openNotesDialog(cancelAppointment, a.id, "Appointment rejected")}>
                     <Cancel fontSize="small" />
                   </IconButton>
                 </Tooltip>
@@ -118,7 +127,11 @@ export default function DoctorAppointmentsPage() {
             )}
             {a.status === "CONFIRMED" && (
               <Tooltip title="Mark Complete">
-                <IconButton color="primary" size="small" onClick={() => setConfirmAction({ fn: completeAppointment, id: a.id, label: "Appointment completed" })}>
+                <IconButton color="primary" size="small" onClick={() => {
+                  setPendingAction({ fn: completeAppointment, id: a.id, label: "Appointment completed" });
+                  setActionNotes("");
+                  setNotesDialogOpen(true);
+                }}>
                   <Done fontSize="small" />
                 </IconButton>
               </Tooltip>
@@ -196,13 +209,32 @@ export default function DoctorAppointmentsPage() {
         </Box>
       )}
 
-      <ConfirmDialog
-        open={!!confirmAction}
-        title="Confirm Action"
-        message="Are you sure you want to proceed?"
-        onConfirm={executeAction}
-        onCancel={() => setConfirmAction(null)}
-      />
+      <Dialog open={notesDialogOpen} onClose={() => setNotesDialogOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>
+          {pendingAction?.label || "Confirm Action"}
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Add a note to include with this action (optional).
+          </Typography>
+          <TextField
+            fullWidth
+            multiline
+            rows={3}
+            label="Notes"
+            placeholder="Enter any notes for the patient..."
+            value={actionNotes}
+            onChange={(e) => setActionNotes(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => { setNotesDialogOpen(false); setPendingAction(null); }}>Cancel</Button>
+          <Button variant="contained" onClick={executeConfirmedAction} color={pendingAction?.fn === cancelAppointment ? "error" : "primary"}>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <AlertSnackbar open={snack.open} severity={snack.severity} message={snack.msg} onClose={() => setSnack({ ...snack, open: false })} />
     </Box>
   );

@@ -27,9 +27,9 @@ export const createAppointment = createAsyncThunk(
 
 export const cancelAppointment = createAsyncThunk(
   "appointments/cancel",
-  async (id, { rejectWithValue }) => {
+  async ({ id, notes }, { rejectWithValue }) => {
     try {
-      const res = await appointmentService.cancel(id);
+      const res = await appointmentService.cancel(id, notes);
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data);
@@ -39,9 +39,9 @@ export const cancelAppointment = createAsyncThunk(
 
 export const confirmAppointment = createAsyncThunk(
   "appointments/confirm",
-  async (id, { rejectWithValue }) => {
+  async ({ id, notes }, { rejectWithValue }) => {
     try {
-      const res = await appointmentService.confirm(id);
+      const res = await appointmentService.confirm(id, notes);
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data);

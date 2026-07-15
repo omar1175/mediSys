@@ -5,25 +5,28 @@ import dayjs from "dayjs";
 import {
   Box, Typography, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Paper, Chip, Button, IconButton, Tooltip, Grid, Card, CardContent,
-  Dialog, DialogTitle, DialogContent, DialogActions,
+  Dialog, DialogTitle, DialogContent, DialogActions, Alert,
 } from "@mui/material";
 import { Cancel, EventBusy, Schedule } from "@mui/icons-material";
-import { fetchAppointments, cancelAppointment, rescheduleAppointment, clearAppointmentSuccess } from "../../store/slices/appointmentsSlice";
+import { fetchAppointments, cancelAppointment, rescheduleAppointment, clearAppointmentSuccess, clearAppointmentError } from "../../store/slices/appointmentsSlice";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
 import AlertSnackbar from "../../components/common/AlertSnackbar";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 
 export default function PatientAppointmentsPage() {
   const dispatch = useDispatch();
-  const { list: appointments, loading, success } = useSelector((s) => s.appointments);
+  const { list: appointments, loading, success, error } = useSelector((s) => s.appointments);
   const [cancelId, setCancelId] = useState(null);
   const [rescheduleAppt, setRescheduleAppt] = useState(null);
   const [newDate, setNewDate] = useState(null);
+  const [statusFilter, setStatusFilter] = useState("");
   const [snack, setSnack] = useState({ open: false, msg: "", severity: "success" });
 
   useEffect(() => {
-    dispatch(fetchAppointments());
-  }, [dispatch]);
+    const params = {};
+    if (statusFilter) params.status = statusFilter;
+    dispatch(fetchAppointments(params));
+  }, [dispatch, statusFilter]);
 
   useEffect(() => {
     if (success) {
@@ -67,31 +70,36 @@ export default function PatientAppointmentsPage() {
     <Box>
       <Typography variant="h4" gutterBottom>My Appointments</Typography>
 
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }} onClose={() => dispatch(clearAppointmentError())}>
+          {typeof error === "string" ? error : error.detail || "An error occurred."}
+        </Alert>
+      )}
+
       <Grid container spacing={3} mb={4}>
-        <Grid size={{ xs: 12, md: 3 }}>
-          <Card><CardContent>
-            <Typography variant="h3" color="primary">{appointments.length}</Typography>
-            <Typography color="text.secondary">Total</Typography>
-          </CardContent></Card>
-        </Grid>
-        <Grid size={{ xs: 12, md: 3 }}>
-          <Card><CardContent>
-            <Typography variant="h3" color="warning.main">{appointments.filter(a => a.status === "PENDING").length}</Typography>
-            <Typography color="text.secondary">Pending</Typography>
-          </CardContent></Card>
-        </Grid>
-        <Grid size={{ xs: 12, md: 3 }}>
-          <Card><CardContent>
-            <Typography variant="h3" color="success.main">{appointments.filter(a => a.status === "CONFIRMED").length}</Typography>
-            <Typography color="text.secondary">Confirmed</Typography>
-          </CardContent></Card>
-        </Grid>
-        <Grid size={{ xs: 12, md: 3 }}>
-          <Card><CardContent>
-            <Typography variant="h3" color="error.main">{appointments.filter(a => a.status === "CANCELLED").length}</Typography>
-            <Typography color="text.secondary">Cancelled</Typography>
-          </CardContent></Card>
-        </Grid>
+        {[
+          { key: "", label: "Total", color: "primary", count: appointments.length },
+          { key: "PENDING", label: "Pending", color: "warning.main", count: appointments.filter(a => a.status === "PENDING").length },
+          { key: "CONFIRMED", label: "Confirmed", color: "success.main", count: appointments.filter(a => a.status === "CONFIRMED").length },
+          { key: "CANCELLED", label: "Cancelled", color: "error.main", count: appointments.filter(a => a.status === "CANCELLED").length },
+        ].map((card) => (
+          <Grid size={{ xs: 12, md: 3 }} key={card.key}>
+            <Card
+              sx={{
+                cursor: "pointer",
+                transition: "transform 0.15s, box-shadow 0.15s",
+                "&:hover": { transform: "translateY(-2px)", boxShadow: 3 },
+                ...(statusFilter === card.key ? { outline: "2px solid", outlineColor: card.color, outlineOffset: 2 } : {}),
+              }}
+              onClick={() => setStatusFilter(card.key)}
+            >
+              <CardContent>
+                <Typography variant="h3" color={card.color}>{card.count}</Typography>
+                <Typography color="text.secondary">{card.label}</Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
       </Grid>
 
       <Typography variant="h6" gutterBottom>Upcoming</Typography>

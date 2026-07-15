@@ -1,33 +1,35 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Box, Typography, Grid, Card, CardContent, TextField, MenuItem,
-  Button, InputAdornment, Avatar, Chip,
+  Button, InputAdornment, Avatar, Chip, Alert,
 } from "@mui/material";
 import { Search as SearchIcon } from "@mui/icons-material";
-import { fetchDoctors, fetchSpecialties } from "../../store/slices/doctorsSlice";
+import { fetchDoctors, fetchSpecialties, clearDoctorError } from "../../store/slices/doctorsSlice";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 
 export default function DoctorListPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { list: doctors, specialties, loading } = useSelector((s) => s.doctors);
+  const { list: doctors, specialties, loading, error } = useSelector((s) => s.doctors);
   const [searchTerm, setSearchTerm] = useState("");
   const [specialtyFilter, setSpecialtyFilter] = useState("");
 
+  const loadDoctors = useCallback(() => {
+    const params = {};
+    if (searchTerm) params.search = searchTerm;
+    if (specialtyFilter) params.specialty = specialtyFilter;
+    dispatch(fetchDoctors(params));
+  }, [dispatch, searchTerm, specialtyFilter]);
+
   useEffect(() => {
-    dispatch(fetchDoctors());
     dispatch(fetchSpecialties());
   }, [dispatch]);
 
-  const filtered = doctors.filter((d) => {
-    const matchesSearch = !searchTerm ||
-      d.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      d.specialty_name?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesSpecialty = !specialtyFilter || d.specialty_name === specialtyFilter;
-    return matchesSearch && matchesSpecialty;
-  });
+  useEffect(() => {
+    loadDoctors();
+  }, [loadDoctors]);
 
   return (
     <Box>
@@ -56,20 +58,26 @@ export default function DoctorListPage() {
         >
           <MenuItem value="">All Specialties</MenuItem>
           {specialties.map((sp) => (
-            <MenuItem key={sp.id} value={sp.name}>{sp.name}</MenuItem>
+            <MenuItem key={sp.id} value={sp.slug}>{sp.name}</MenuItem>
           ))}
         </TextField>
       </Box>
 
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }} onClose={() => dispatch(clearDoctorError())}>
+          {typeof error === "string" ? error : error.detail || "Failed to load doctors."}
+        </Alert>
+      )}
+
       {loading ? <LoadingSpinner /> : (
         <Grid container spacing={3}>
-          {filtered.length === 0 ? (
+          {doctors.length === 0 ? (
             <Grid size={{ xs: 12 }}>
               <Typography textAlign="center" color="text.secondary" py={4}>
                 No doctors found matching your criteria.
               </Typography>
             </Grid>
-          ) : filtered.map((doc) => (
+          ) : doctors.map((doc) => (
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={doc.id}>
               <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
                 <CardContent sx={{ flexGrow: 1 }}>
