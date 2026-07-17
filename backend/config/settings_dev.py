@@ -18,5 +18,10 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "omarabdelstar2002@gmail.com"
-EMAIL_HOST_PASSWORD = "txadyudgunkzhxir"
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "YOUR_APP_PASSWORD_HERE")
 DEFAULT_FROM_EMAIL = "MediSys <omarabdelstar2002@gmail.com>"
+
+# Stripe test keys for development
+STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "sk_test_YOUR_KEY_HERE")
+STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY", "pk_test_YOUR_KEY_HERE")
+STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "whsec_YOUR_SECRET_HERE")

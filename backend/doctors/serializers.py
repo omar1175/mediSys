@@ -51,6 +51,7 @@ class DoctorProfileSerializer(serializers.ModelSerializer):
     email = serializers.CharField(source="user.email", read_only=True)
     first_name = serializers.CharField(source="user.first_name", read_only=True)
     last_name = serializers.CharField(source="user.last_name", read_only=True)
+    full_name = serializers.SerializerMethodField()
     specialty_detail = SpecialtySerializer(source="specialty", read_only=True)
     availability = AvailabilitySerializer(many=True, read_only=True)
 
@@ -58,10 +59,14 @@ class DoctorProfileSerializer(serializers.ModelSerializer):
         model = DoctorProfile
         fields = [
             "id", "user_id", "username", "email", "first_name", "last_name",
-            "specialty", "specialty_detail", "bio", "phone", "consultation_fee",
-            "is_approved", "availability", "created_at",
+            "full_name", "specialty", "specialty_detail", "bio", "phone",
+            "consultation_fee", "online_consultation_fee", "rating",
+            "years_of_experience", "is_approved", "availability", "created_at",
         ]
         read_only_fields = ["id", "user_id", "is_approved", "created_at"]
+
+    def get_full_name(self, obj):
+        return obj.user.get_full_name() or obj.user.username
 
 
 class DoctorListSerializer(serializers.ModelSerializer):
@@ -70,13 +75,19 @@ class DoctorListSerializer(serializers.ModelSerializer):
     last_name = serializers.CharField(source="user.last_name", read_only=True)
     full_name = serializers.SerializerMethodField()
     specialty_name = serializers.CharField(source="specialty.name", read_only=True)
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = DoctorProfile
         fields = [
             "id", "username", "first_name", "last_name", "full_name",
-            "specialty", "specialty_name", "consultation_fee", "bio",
+            "specialty", "specialty_name", "consultation_fee",
+            "online_consultation_fee", "bio", "rating",
+            "years_of_experience", "image",
         ]
 
     def get_full_name(self, obj):
         return obj.user.get_full_name() or obj.user.username
+
+    def get_image(self, obj):
+        return getattr(obj, "image", None) or None

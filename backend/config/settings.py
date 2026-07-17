@@ -7,8 +7,11 @@ Both import everything from here and only change what differs per environment.
 """
 
 from pathlib import Path
-
+import os
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+from dotenv import load_dotenv
+load_dotenv(BASE_DIR / ".env")
 
 
 # ---------------------------------------------------------------------------
@@ -22,6 +25,7 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 # Default Django install apps + project apps.
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -29,14 +33,22 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Third party
+    "channels",
     "rest_framework",
     "corsheaders",
     "anymail",
+    "cloudinary",
+    "cloudinary_storage",
     # Local apps
     "core",
     "users",
     "doctors",
     "appointments",
+    "chats",
+    "calls",
+    "medical_history",
+    "payments",
+    "agent",
 ]
 
 MIDDLEWARE = [
@@ -71,6 +83,32 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
+
+ASGI_APPLICATION = "config.asgi.application"
+
+# ---------------------------------------------------------------------------
+# Channel Layers (Django Channels for WebSockets)
+# ---------------------------------------------------------------------------
+
+# Channel Layers (Django Channels for WebSockets)
+# Use InMemory channel layer if USE_REDIS=0 (development fallback when Redis unavailable)
+import os
+if os.environ.get("USE_REDIS", "1") == "0":
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer",
+        },
+    }
+else:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [("127.0.0.1", 6379)],
+            },
+        },
+    }
+
 
 
 # ---------------------------------------------------------------------------
@@ -158,7 +196,7 @@ ANYMAIL = {
 # Internationalization
 # ---------------------------------------------------------------------------
 LANGUAGE_CODE = "en-us"
-TIME_ZONE = "UTC"
+TIME_ZONE = "Africa/Cairo"
 USE_I18N = True
 USE_TZ = True
 
@@ -174,3 +212,51 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # Frontend / site URLs used when building links inside emails.
 # ---------------------------------------------------------------------------
 FRONTEND_URL = "http://localhost:5173"
+
+
+# ---------------------------------------------------------------------------
+# Stripe (payments app)
+# ---------------------------------------------------------------------------
+STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "")
+STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY", "")
+STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+STRIPE_DEFAULT_CURRENCY = "USD"
+
+
+# ---------------------------------------------------------------------------
+# Media files (Cloudinary)
+# ---------------------------------------------------------------------------
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": os.environ.get("CLOUDINARY_CLOUD_NAME", ""),
+    "API_KEY": os.environ.get("CLOUDINARY_API_KEY", ""),
+    "API_SECRET": os.environ.get("CLOUDINARY_API_SECRET", ""),
+}
+
+if CLOUDINARY_STORAGE.get("CLOUD_NAME"):
+    STORAGES = {
+        "default": {
+            "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
+else:
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
+
+
+# ---------------------------------------------------------------------------
+# Groq (AI Agent)
+# ---------------------------------------------------------------------------
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
+GROQ_MODEL = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")

@@ -17,11 +17,13 @@ from core.choices import (
     APPOINTMENT_STATUS_COMPLETED,
     APPOINTMENT_STATUS_CONFIRMED,
     APPOINTMENT_STATUS_PENDING,
+    APPOINTMENT_TYPE_IN_PERSON,
     ADMIN,
     DOCTOR,
     PATIENT,
 )
 from doctors.models import Availability, DoctorProfile, Specialty
+from payments.models import SubscriptionPlan
 from users.models import CustomUser
 
 # ── Realistic seed data ──────────────────────────────────────────────────────
@@ -44,101 +46,131 @@ DOCTORS = [
         "username": "dr_smith",
         "email": "dr.smith@medclinic.com",
         "first_name": "Sarah",
-        "last_name": "Smith",
+        "last_name": "Johnson",
         "specialty": "Cardiology",
         "bio": "Board-certified cardiologist with 15 years of experience in interventional cardiology and heart failure management.",
         "phone": "+1-555-0101",
         "fee": 250.00,
+        "online_fee": 80.00,
+        "rating": 4.9,
+        "years": 15,
     },
     {
         "username": "dr_johnson",
         "email": "dr.johnson@medclinic.com",
         "first_name": "Michael",
-        "last_name": "Johnson",
+        "last_name": "Chen",
         "specialty": "General Practice",
         "bio": "Compassionate family physician dedicated to preventive care and building lasting patient relationships.",
         "phone": "+1-555-0102",
         "fee": 100.00,
+        "online_fee": 35.00,
+        "rating": 4.7,
+        "years": 12,
     },
     {
         "username": "dr_patel",
         "email": "dr.patel@medclinic.com",
-        "first_name": "Priya",
-        "last_name": "Patel",
+        "first_name": "Emily",
+        "last_name": "Davis",
         "specialty": "Dermatology",
         "bio": "Fellowship-trained dermatologist specializing in cosmetic and medical dermatology, skin cancer screening.",
         "phone": "+1-555-0103",
         "fee": 200.00,
+        "online_fee": 60.00,
+        "rating": 4.8,
+        "years": 8,
     },
     {
         "username": "dr_chen",
         "email": "dr.chen@medclinic.com",
-        "first_name": "Wei",
-        "last_name": "Chen",
+        "first_name": "Robert",
+        "last_name": "Smith",
         "specialty": "Neurology",
         "bio": "Neurologist with expertise in headache medicine, epilepsy, and neurodegenerative disorders.",
         "phone": "+1-555-0104",
         "fee": 275.00,
+        "online_fee": 90.00,
+        "rating": 4.6,
+        "years": 20,
     },
     {
         "username": "dr_garcia",
         "email": "dr.garcia@medclinic.com",
-        "first_name": "Maria",
-        "last_name": "Garcia",
+        "first_name": "Lisa",
+        "last_name": "Brown",
         "specialty": "Pediatrics",
         "bio": "Board-certified pediatrician passionate about child development, vaccinations, and adolescent medicine.",
         "phone": "+1-555-0105",
         "fee": 120.00,
+        "online_fee": 40.00,
+        "rating": 4.9,
+        "years": 10,
     },
     {
         "username": "dr_williams",
         "email": "dr.williams@medclinic.com",
-        "first_name": "James",
-        "last_name": "Williams",
+        "first_name": "David",
+        "last_name": "Wilson",
         "specialty": "Orthopedics",
         "bio": "Orthopedic surgeon specializing in sports medicine, joint replacement, and minimally invasive procedures.",
         "phone": "+1-555-0106",
         "fee": 300.00,
+        "online_fee": 100.00,
+        "rating": 4.5,
+        "years": 18,
     },
     {
         "username": "dr_kim",
         "email": "dr.kim@medclinic.com",
-        "first_name": "Ji-Yeon",
-        "last_name": "Kim",
+        "first_name": "Maria",
+        "last_name": "Rodriguez",
         "specialty": "Psychiatry",
         "bio": "Psychiatrist focusing on mood disorders, anxiety, and evidence-based medication management.",
         "phone": "+1-555-0107",
         "fee": 220.00,
+        "online_fee": 70.00,
+        "rating": 4.8,
+        "years": 14,
     },
     {
         "username": "dr_ahmed",
         "email": "dr.ahmed@medclinic.com",
-        "first_name": "Omar",
-        "last_name": "Ahmed",
+        "first_name": "James",
+        "last_name": "Thompson",
         "specialty": "General Surgery",
         "bio": "Experienced general surgeon with expertise in laparoscopic and bariatric surgery.",
         "phone": "+1-555-0108",
         "fee": 350.00,
+        "online_fee": 120.00,
+        "rating": 4.7,
+        "years": 22,
     },
     {
         "username": "dr_lee",
         "email": "dr.lee@medclinic.com",
-        "first_name": "David",
-        "last_name": "Lee",
+        "first_name": "Amanda",
+        "last_name": "Foster",
         "specialty": "Radiology",
         "bio": "Diagnostic radiologist proficient in MRI, CT, and ultrasound interpretation with interventional experience.",
         "phone": "+1-555-0109",
         "fee": 180.00,
+        "online_fee": 55.00,
+        "rating": 4.4,
+        "years": 9,
     },
     {
         "username": "dr_martinez",
         "email": "dr.martinez@medclinic.com",
-        "first_name": "Ana",
-        "last_name": "Martinez",
+        "first_name": "Victoria",
+        "last_name": "Torres",
         "specialty": "Urology",
         "bio": "Urologist specializing in kidney stones, urinary infections, and minimally invasive urologic surgery.",
         "phone": "+1-555-0110",
         "fee": 230.00,
+        "online_fee": 75.00,
+        "rating": 4.6,
+        "years": 11,
     },
 ]
 
@@ -212,6 +244,7 @@ class Command(BaseCommand):
         patients = self._create_patients()
         self._create_availability(doctors)
         self._create_appointments(doctors, patients)
+        self._create_subscription_plans()
 
         self._print_summary()
         self.stdout.write(self.style.SUCCESS("Done!"))
@@ -254,9 +287,14 @@ class Command(BaseCommand):
                     "bio": data["bio"],
                     "phone": data["phone"],
                     "consultation_fee": data["fee"],
+                    "online_consultation_fee": data.get("online_fee", 0),
+                    "rating": data.get("rating", 0),
+                    "years_of_experience": data.get("years", 0),
                     "is_approved": True,
                 },
             )
+            if not p_created:
+                DoctorProfile.objects.filter(pk=profile.pk).update(is_approved=True)
             if p_created:
                 self.stdout.write(f"  + Doctor profile: Dr. {data['last_name']}")
             objs.append(profile)
@@ -419,6 +457,20 @@ class Command(BaseCommand):
         self.stdout.write(f"  Specialties:{Specialty.objects.count()}")
         self.stdout.write(f"  Availability:{Availability.objects.count()}")
         self.stdout.write(f"  Appointments:{Appointment.objects.count()}")
+        self.stdout.write(f"  Plans:      {SubscriptionPlan.objects.count()}")
+
+    def _create_subscription_plans(self):
+        plan, created = SubscriptionPlan.objects.get_or_create(
+            name="Monthly Plan",
+            defaults={
+                "description": "Full access to the platform for one month. Manage appointments, chat with patients, and more.",
+                "price": 50.00,
+                "duration_days": 30,
+                "is_active": True,
+            },
+        )
+        if created:
+            self.stdout.write(f"  + Subscription plan: {plan.name} — ${plan.price}")
         self.stdout.write("")
         self.stdout.write(self.style.WARNING("Login credentials:"))
         self.stdout.write("  Admin:      admin / admin123")

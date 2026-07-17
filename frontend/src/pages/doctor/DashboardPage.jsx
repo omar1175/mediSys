@@ -7,6 +7,7 @@ import {
 } from "@mui/material";
 import { Event, Schedule, Person } from "@mui/icons-material";
 import { fetchAppointments } from "../../store/slices/appointmentsSlice";
+import AgentWidget from "../../components/agent/AgentWidget";
 import dayjs from "dayjs";
 
 export default function DoctorDashboard() {
@@ -125,6 +126,7 @@ export default function DoctorDashboard() {
           ))}
         </>
       )}
+      <AgentWidget />
     </Box>
   );
 }

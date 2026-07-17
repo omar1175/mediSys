@@ -102,11 +102,14 @@ const authSlice = createSlice({
         state.user = action.payload;
         state.isAuthenticated = true;
       })
-      .addCase(fetchMe.rejected, (state) => {
-        state.user = null;
-        state.isAuthenticated = false;
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
+      .addCase(fetchMe.rejected, (state, action) => {
+        const status = action.payload?.code;
+        if (status === "token_not_valid" || action.meta?.aborted) {
+          state.user = null;
+          state.isAuthenticated = false;
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("refresh_token");
+        }
       })
       .addCase(updateMe.fulfilled, (state, action) => {
         state.user = action.payload;

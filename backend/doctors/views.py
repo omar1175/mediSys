@@ -1,8 +1,10 @@
 from rest_framework import viewsets, permissions, filters, status as http_status
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes as pm
 from rest_framework.response import Response
 
 from users.permissions import IsAdminOrReadOnly, IsAdminRole, IsDoctor
+from users.models import CustomUser
+from appointments.models import Appointment
 
 from .models import Availability, DoctorProfile, Specialty
 from .serializers import (
@@ -11,6 +13,17 @@ from .serializers import (
     DoctorProfileSerializer,
     SpecialtySerializer,
 )
+
+
+@api_view(["GET"])
+@pm([permissions.AllowAny])
+def platform_stats(request):
+    return Response({
+        "total_doctors": DoctorProfile.objects.filter(is_approved=True).count(),
+        "total_patients": CustomUser.objects.filter(role="PATIENT").count(),
+        "total_appointments": Appointment.objects.count(),
+        "total_specialties": Specialty.objects.count(),
+    })
 
 
 class SpecialtyViewSet(viewsets.ModelViewSet):

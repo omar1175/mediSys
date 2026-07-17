@@ -3,20 +3,24 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   Box, Typography, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Paper, Chip, TextField, InputAdornment,
-  Grid, Card, CardContent, Avatar, IconButton, Tooltip,
+  Grid, Avatar,
 } from "@mui/material";
 import {
   Search, Event, Pending, CheckCircle, Cancel,
 } from "@mui/icons-material";
 import { fetchAppointments } from "../../store/slices/appointmentsSlice";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
+import StatCard from "../../components/common/StatCard";
+import StatusChip from "../../components/common/StatusChip";
+import GradientHeader from "../../components/common/GradientHeader";
+import EmptyState from "../../components/common/EmptyState";
 import dayjs from "dayjs";
 
 const STAT_CARDS = [
-  { key: "total", label: "Total", icon: <Event />, gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" },
-  { key: "PENDING", label: "Pending", icon: <Pending />, gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)" },
-  { key: "CONFIRMED", label: "Confirmed", icon: <CheckCircle />, gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)" },
-  { key: "CANCELLED", label: "Cancelled", icon: <Cancel />, gradient: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)" },
+  { key: "total", label: "Total", icon: <Event sx={{ fontSize: 28 }} /> },
+  { key: "PENDING", label: "Pending", icon: <Pending sx={{ fontSize: 28 }} /> },
+  { key: "CONFIRMED", label: "Confirmed", icon: <CheckCircle sx={{ fontSize: 28 }} /> },
+  { key: "CANCELLED", label: "Cancelled", icon: <Cancel sx={{ fontSize: 28 }} /> },
 ];
 
 export default function AdminAppointmentsPage() {
@@ -56,94 +60,72 @@ export default function AdminAppointmentsPage() {
   const paginated = filtered.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
   const totalPages = Math.ceil(filtered.length / rowsPerPage);
 
-  const statusColor = (s) => {
-    if (s === "CONFIRMED") return "success";
-    if (s === "PENDING") return "warning";
-    if (s === "CANCELLED") return "error";
-    return "default";
-  };
-
-  const initials = (name) => name?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) || "?";
   const isPast = (dt) => dayjs(dt).isBefore(dayjs());
 
   if (loading) return <LoadingSpinner />;
 
   return (
     <Box>
-      <Typography variant="h4" fontWeight={700} gutterBottom>
-        Appointments Overview
-      </Typography>
-      <Typography color="text.secondary" mb={3}>
-        Monitor and manage all appointments across the platform
-      </Typography>
+      <GradientHeader title="Appointments Overview" subtitle="Monitor and manage all appointments across the platform" gradient="dark" />
 
-      <Grid container spacing={2} mb={3}>
-        {STAT_CARDS.map((card) => (
-          <Grid size={{ xs: 6, sm: 3 }} key={card.key}>
-            <Card
+      {/* Stat Cards */}
+      <Grid container spacing={2.5} mb={3}>
+        {STAT_CARDS.map((card, i) => (
+          <Grid size={{ xs: 6, sm: 3 }} key={card.key} data-aos="fade-up" data-aos-delay={String(i * 100)}>
+            <StatCard
+              icon={card.icon}
+              value={counts[card.key]}
+              label={card.label}
+              gradientIndex={i}
               onClick={() => setStatusFilter(card.key === "total" ? "" : card.key)}
-              sx={{
-                cursor: "pointer",
-                background: card.gradient,
-                color: "#fff",
-                transition: "transform 0.15s, box-shadow 0.15s",
-                "&:hover": { transform: "translateY(-3px)", boxShadow: 4 },
-                ...(statusFilter === card.key || (card.key === "total" && !statusFilter)
-                  ? { outline: "3px solid rgba(255,255,255,0.6)", outlineOffset: 2 }
-                  : {}),
-              }}
-            >
-              <CardContent sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                <Avatar sx={{ bgcolor: "rgba(255,255,255,0.25)", width: 48, height: 48 }}>
-                  {card.icon}
-                </Avatar>
-                <Box>
-                  <Typography variant="h4" fontWeight={700}>
-                    {counts[card.key]}
-                  </Typography>
-                  <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                    {card.label}
-                  </Typography>
-                </Box>
-              </CardContent>
-            </Card>
+              active={statusFilter === card.key || (card.key === "total" && !statusFilter)}
+            />
           </Grid>
         ))}
       </Grid>
 
-      <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-        <TextField
-          placeholder="Search by patient, doctor, specialty, or ID..."
-          value={search}
-          onChange={(e) => { setSearch(e.target.value); setPage(0); }}
-          sx={{ flexGrow: 1, maxWidth: 500 }}
-          slotProps={{
-            input: {
-              startAdornment: <InputAdornment position="start"><Search /></InputAdornment>,
-            },
-          }}
-        />
-      </Box>
+      {/* Search */}
+      <TextField
+        placeholder="Search by patient, doctor, specialty, or ID..."
+        value={search}
+        onChange={(e) => { setSearch(e.target.value); setPage(0); }}
+        sx={{ mb: 3, maxWidth: 500 }}
+        slotProps={{
+          input: {
+            startAdornment: <InputAdornment position="start"><Search sx={{ color: "#94a3b8" }} /></InputAdornment>,
+          },
+        }}
+      />
 
-      <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
+      {/* Table */}
+      <TableContainer
+        component={Paper}
+        sx={{
+          borderRadius: 3,
+          overflow: "hidden",
+          boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
+        }}
+      >
         <Table size="small">
           <TableHead>
-            <TableRow sx={{ bgcolor: "grey.50" }}>
-              <TableCell sx={{ fontWeight: 700 }}>ID</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Patient</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Doctor</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Specialty</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Date & Time</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Duration</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
+            <TableRow sx={{ bgcolor: "#f8fafc" }}>
+              {["ID", "Patient", "Doctor", "Specialty", "Date & Time", "Duration", "Status"].map((h) => (
+                <TableCell key={h} sx={{ fontWeight: 700, color: "#64748b", fontFamily: '"Montserrat", sans-serif', fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: 0.5 }}>
+                  {h}
+                </TableCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>
             {paginated.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
-                  <Event sx={{ fontSize: 48, color: "grey.300", mb: 1 }} />
-                  <Typography color="text.secondary">No appointments found</Typography>
+                <TableCell colSpan={7}>
+                  <EmptyState
+                    title="No appointments found"
+                    description="Try adjusting your search or filters to see more results."
+                    image="/assets/img/health/consultation-4.webp"
+                    sx={{ py: 4, boxShadow: "none" }}
+                  />
                 </TableCell>
               </TableRow>
             ) : paginated.map((a) => (
@@ -152,49 +134,49 @@ export default function AdminAppointmentsPage() {
                 hover
                 sx={{
                   opacity: isPast(a.scheduled_at) && a.status !== "COMPLETED" ? 0.7 : 1,
-                  "&:last-child td": { border: 0 },
+                  transition: "all 0.2s ease",
+                  "&:hover": { bgcolor: "#f8fafc" },
                 }}
               >
                 <TableCell>
-                  <Typography variant="body2" fontWeight={600} color="text.secondary">
-                    #{a.id}
-                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600, color: "#64748b" }}>#{a.id}</Typography>
                 </TableCell>
                 <TableCell>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <Avatar sx={{ width: 32, height: 32, fontSize: 13, bgcolor: "primary.light", color: "primary.contrastText" }}>
-                      {initials(a.patient_name)}
-                    </Avatar>
-                    <Typography variant="body2">{a.patient_name}</Typography>
+                    <Avatar
+                      src={`/assets/img/person/person-${['m','f'][a.patient_name?.charCodeAt(0) % 2 || 0]}-${(a.patient_name?.charCodeAt(1) || 5) % 13 + 1}.webp`}
+                      sx={{
+                        width: 32,
+                        height: 32,
+                        border: "2px solid #059669",
+                      }}
+                    />
+                    <Typography variant="body2" sx={{ fontWeight: 500 }}>{a.patient_name}</Typography>
                   </Box>
                 </TableCell>
                 <TableCell>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <Avatar sx={{ width: 32, height: 32, fontSize: 13, bgcolor: "secondary.light", color: "secondary.contrastText" }}>
-                      {initials(a.doctor_name)}
-                    </Avatar>
-                    <Typography variant="body2">{a.doctor_name}</Typography>
+                    <Avatar
+                      src={`/assets/img/health/staff-${(a.doctor_name?.charCodeAt(0) || 1) % 11 + 1}.webp`}
+                      sx={{
+                        width: 32,
+                        height: 32,
+                        border: "2px solid #175cdd",
+                      }}
+                    />
+                    <Typography variant="body2" sx={{ fontWeight: 500 }}>{a.doctor_name}</Typography>
                   </Box>
                 </TableCell>
                 <TableCell>
-                  <Chip label={a.specialty_name || "—"} size="small" variant="outlined" />
+                  <Chip label={a.specialty_name || "—"} size="small" variant="outlined" sx={{ fontWeight: 500 }} />
                 </TableCell>
                 <TableCell>
-                  <Typography variant="body2">
-                    {dayjs(a.scheduled_at).format("MMM D, YYYY")}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {dayjs(a.scheduled_at).format("h:mm A")}
-                  </Typography>
+                  <Typography variant="body2">{dayjs(a.scheduled_at).format("MMM D, YYYY")}</Typography>
+                  <Typography variant="caption" color="text.secondary">{dayjs(a.scheduled_at).format("h:mm A")}</Typography>
                 </TableCell>
                 <TableCell>{a.duration_minutes} min</TableCell>
                 <TableCell>
-                  <Chip
-                    label={a.status}
-                    size="small"
-                    color={statusColor(a.status)}
-                    sx={{ fontWeight: 600 }}
-                  />
+                  <StatusChip status={a.status} type="appointment" />
                 </TableCell>
               </TableRow>
             ))}
@@ -203,15 +185,28 @@ export default function AdminAppointmentsPage() {
       </TableContainer>
 
       {totalPages > 1 && (
-        <Box sx={{ display: "flex", justifyContent: "center", gap: 1, mt: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 1, mt: 3 }}>
           {Array.from({ length: totalPages }, (_, i) => (
             <Chip
               key={i}
               label={i + 1}
               onClick={() => setPage(i)}
-              color={page === i ? "primary" : "default"}
-              variant={page === i ? "filled" : "outlined"}
-              sx={{ cursor: "pointer" }}
+              sx={{
+                cursor: "pointer",
+                fontWeight: 700,
+                fontSize: "0.85rem",
+                height: 36,
+                borderRadius: 2,
+                bgcolor: page === i ? "linear-gradient(135deg, #175cdd 0%, #4a90e2 100%)" : "#f1f5f9",
+                color: page === i ? "#fff" : "#64748b",
+                border: page === i ? "none" : "1px solid #e2e8f0",
+                transition: "all 0.2s ease",
+                "&:hover": {
+                  bgcolor: page === i ? "linear-gradient(135deg, #0f4ba0 0%, #3a7bd5 100%)" : "#e2e8f0",
+                  transform: "translateY(-1px)",
+                  boxShadow: page === i ? "0 4px 12px rgba(23,92,221,0.3)" : "0 2px 8px rgba(0,0,0,0.08)",
+                },
+              }}
             />
           ))}
         </Box>

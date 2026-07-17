@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
-from core.choices import PATIENT, DOCTOR, ROLE_CHOICES
+from core.choices import PATIENT, DOCTOR, ADMIN, ROLE_CHOICES
 
 User = get_user_model()
 
@@ -39,7 +39,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
     role = serializers.ChoiceField(
-        choices=[(PATIENT, "Patient"), (DOCTOR, "Doctor")], default=PATIENT
+        choices=[(PATIENT, "Patient"), (DOCTOR, "Doctor"), (ADMIN, "Admin")], default=PATIENT
     )
 
     class Meta:

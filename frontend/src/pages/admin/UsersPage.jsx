@@ -1,8 +1,8 @@
 import { useEffect, useState, useMemo } from "react";
 import {
   Box, Typography, Table, TableBody, TableCell, TableContainer,
-  TableHead, TableRow, Paper, Chip, TextField, InputAdornment,
-  Switch, Avatar, Grid, Card, CardContent, FormControl,
+  TableHead, TableRow, Paper, TextField, InputAdornment,
+  Switch, Avatar, Grid, FormControl,
   InputLabel, Select, MenuItem,
 } from "@mui/material";
 import {
@@ -13,18 +13,24 @@ import { authService } from "../../services/authService";
 import { doctorService } from "../../services/doctorService";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import AlertSnackbar from "../../components/common/AlertSnackbar";
+import StatCard from "../../components/common/StatCard";
+import StatusChip from "../../components/common/StatusChip";
+import GradientHeader from "../../components/common/GradientHeader";
+import EmptyState from "../../components/common/EmptyState";
+import { getDoctorImage } from "../../data/doctorImages";
+import { getPatientImage } from "../../data/patientImages";
 
 const STAT_CARDS = [
-  { key: "total", label: "Total Users", icon: <People />, gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" },
-  { key: "ADMIN", label: "Admins", icon: <AdminPanelSettings />, gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)" },
-  { key: "DOCTOR", label: "Doctors", icon: <MedicalServices />, gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)" },
-  { key: "PATIENT", label: "Patients", icon: <Person />, gradient: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)" },
+  { key: "total", label: "Total Users", icon: <People sx={{ fontSize: 28 }} /> },
+  { key: "ADMIN", label: "Admins", icon: <AdminPanelSettings sx={{ fontSize: 28 }} /> },
+  { key: "DOCTOR", label: "Doctors", icon: <MedicalServices sx={{ fontSize: 28 }} /> },
+  { key: "PATIENT", label: "Patients", icon: <Person sx={{ fontSize: 28 }} /> },
 ];
 
 const AVATAR_COLORS = {
-  ADMIN: "error.main",
-  DOCTOR: "primary.main",
-  PATIENT: "success.main",
+  ADMIN: "#dc2626",
+  DOCTOR: "#175cdd",
+  PATIENT: "#059669",
 };
 
 export default function AdminUsersPage() {
@@ -83,53 +89,30 @@ export default function AdminUsersPage() {
     `${u.first_name} ${u.last_name}`.toLowerCase().includes(search.toLowerCase())
   ), [users, search]);
 
-  const initials = (u) => {
-    const name = `${u.first_name || ""} ${u.last_name || ""}`.trim();
-    return name ? name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) : u.username?.slice(0, 2).toUpperCase();
-  };
-
   if (loading) return <LoadingSpinner />;
 
   return (
     <Box>
-      <Typography variant="h4" fontWeight={700} gutterBottom>
-        User Management
-      </Typography>
-      <Typography color="text.secondary" mb={3}>
-        View, approve, and manage all registered users
-      </Typography>
+      <GradientHeader title="User Management" subtitle="View, approve, and manage all registered users" gradient="dark" />
 
-      <Grid container spacing={2} mb={3}>
-        {STAT_CARDS.map((card) => (
-          <Grid size={{ xs: 6, sm: 3 }} key={card.key}>
-            <Card
+      {/* Stat Cards */}
+      <Grid container spacing={2.5} mb={3}>
+        {STAT_CARDS.map((card, i) => (
+          <Grid size={{ xs: 6, sm: 3 }} key={card.key} data-aos="fade-up" data-aos-delay={String(i * 100)}>
+            <StatCard
+              icon={card.icon}
+              value={counts[card.key]}
+              label={card.label}
+              gradientIndex={i}
               onClick={() => setRoleFilter(card.key === "total" ? "" : card.key)}
-              sx={{
-                cursor: "pointer",
-                background: card.gradient,
-                color: "#fff",
-                transition: "transform 0.15s, box-shadow 0.15s",
-                "&:hover": { transform: "translateY(-3px)", boxShadow: 4 },
-                ...(roleFilter === card.key || (card.key === "total" && !roleFilter)
-                  ? { outline: "3px solid rgba(255,255,255,0.6)", outlineOffset: 2 }
-                  : {}),
-              }}
-            >
-              <CardContent sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                <Avatar sx={{ bgcolor: "rgba(255,255,255,0.25)", width: 48, height: 48 }}>
-                  {card.icon}
-                </Avatar>
-                <Box>
-                  <Typography variant="h4" fontWeight={700}>{counts[card.key]}</Typography>
-                  <Typography variant="body2" sx={{ opacity: 0.9 }}>{card.label}</Typography>
-                </Box>
-              </CardContent>
-            </Card>
+              active={roleFilter === card.key || (card.key === "total" && !roleFilter)}
+            />
           </Grid>
         ))}
       </Grid>
 
-      <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+      {/* Search & Filter */}
+      <Box sx={{ display: "flex", gap: 2, mb: 3, flexWrap: "wrap" }}>
         <TextField
           placeholder="Search by name, username, or email..."
           value={search}
@@ -137,17 +120,13 @@ export default function AdminUsersPage() {
           sx={{ flexGrow: 1, maxWidth: 450 }}
           slotProps={{
             input: {
-              startAdornment: <InputAdornment position="start"><Search /></InputAdornment>,
+              startAdornment: <InputAdornment position="start"><Search sx={{ color: "#94a3b8" }} /></InputAdornment>,
             },
           }}
         />
         <FormControl sx={{ minWidth: 150 }}>
           <InputLabel>Role</InputLabel>
-          <Select
-            value={roleFilter}
-            label="Role"
-            onChange={(e) => setRoleFilter(e.target.value)}
-          >
+          <Select value={roleFilter} label="Role" onChange={(e) => setRoleFilter(e.target.value)}>
             <MenuItem value="">All</MenuItem>
             <MenuItem value="ADMIN">Admin</MenuItem>
             <MenuItem value="DOCTOR">Doctor</MenuItem>
@@ -156,72 +135,137 @@ export default function AdminUsersPage() {
         </FormControl>
       </Box>
 
-      <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
+      {/* Summary Banner */}
+      <Box
+        data-aos="fade-up"
+        data-aos-delay="100"
+        sx={{
+          background: "linear-gradient(135deg, #0c1445 0%, #1a237e 50%, #175cdd 100%)",
+          borderRadius: 3,
+          p: 3,
+          mb: 3,
+          color: "#fff",
+          display: "flex",
+          alignItems: "center",
+          gap: 3,
+          flexWrap: "wrap",
+        }}
+      >
+        <Avatar sx={{ bgcolor: "rgba(255,255,255,0.15)", width: 56, height: 56 }}>
+          <People sx={{ fontSize: 28 }} />
+        </Avatar>
+        <Box>
+          <Typography variant="h4" sx={{ fontFamily: '"Montserrat", sans-serif', fontWeight: 800, lineHeight: 1 }}>
+            {filtered.length}
+          </Typography>
+          <Typography variant="body2" sx={{ opacity: 0.9 }}>
+            {roleFilter ? `${roleFilter.charAt(0) + roleFilter.slice(1).toLowerCase()} users` : "Total users"} found
+          </Typography>
+        </Box>
+        <Box sx={{ ml: "auto", display: "flex", gap: 3 }}>
+          {counts.ADMIN > 0 && (
+            <Box sx={{ textAlign: "center" }}>
+              <Typography variant="h5" sx={{ fontWeight: 800, lineHeight: 1 }}>{counts.ADMIN}</Typography>
+              <Typography variant="caption" sx={{ opacity: 0.8 }}>Admins</Typography>
+            </Box>
+          )}
+          {counts.DOCTOR > 0 && (
+            <Box sx={{ textAlign: "center" }}>
+              <Typography variant="h5" sx={{ fontWeight: 800, lineHeight: 1 }}>{counts.DOCTOR}</Typography>
+              <Typography variant="caption" sx={{ opacity: 0.8 }}>Doctors</Typography>
+            </Box>
+          )}
+          {counts.PATIENT > 0 && (
+            <Box sx={{ textAlign: "center" }}>
+              <Typography variant="h5" sx={{ fontWeight: 800, lineHeight: 1 }}>{counts.PATIENT}</Typography>
+              <Typography variant="caption" sx={{ opacity: 0.8 }}>Patients</Typography>
+            </Box>
+          )}
+        </Box>
+      </Box>
+
+      {/* Table */}
+      <TableContainer
+        component={Paper}
+        sx={{
+          borderRadius: 3,
+          overflow: "hidden",
+          boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
+        }}
+      >
         <Table size="small">
           <TableHead>
-            <TableRow sx={{ bgcolor: "grey.50" }}>
-              <TableCell sx={{ fontWeight: 700 }}>User</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Email</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Role</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Verified</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Active</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Approved</TableCell>
+            <TableRow sx={{ bgcolor: "#f8fafc" }}>
+              {["User", "Email", "Role", "Verified", "Active", "Approved"].map((h) => (
+                <TableCell key={h} sx={{ fontWeight: 700, color: "#64748b", fontFamily: '"Montserrat", sans-serif', fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: 0.5 }}>
+                  {h}
+                </TableCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} align="center" sx={{ py: 6 }}>
-                  <People sx={{ fontSize: 48, color: "grey.300", mb: 1 }} />
-                  <Typography color="text.secondary">No users found</Typography>
+                <TableCell colSpan={6}>
+                  <EmptyState
+                    title="No users found"
+                    description="Try adjusting your search or filters to find what you're looking for."
+                    image="/assets/img/health/consultation-4.webp"
+                    sx={{ py: 4, boxShadow: "none" }}
+                  />
                 </TableCell>
               </TableRow>
-            ) : filtered.map((u) => (
-              <TableRow key={u.id} hover sx={{ "&:last-child td": { border: 0 } }}>
-                <TableCell>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                    <Avatar sx={{ width: 36, height: 36, fontSize: 14, bgcolor: AVATAR_COLORS[u.role] || "grey.500", color: "#fff", fontWeight: 700 }}>
-                      {initials(u)}
-                    </Avatar>
-                    <Box>
-                      <Typography variant="body2" fontWeight={600}>
-                        {u.first_name && u.last_name ? `${u.first_name} ${u.last_name}` : u.username}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">@{u.username}</Typography>
+            ) : filtered.map((u) => {
+              const userImage = u.role === "DOCTOR"
+                ? getDoctorImage(u)
+                : getPatientImage(u);
+              return (
+                <TableRow
+                  key={u.id}
+                  hover
+                  sx={{
+                    transition: "all 0.2s ease",
+                    "&:hover": { bgcolor: "#f8fafc" },
+                  }}
+                >
+                  <TableCell>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                      <Avatar
+                        src={userImage}
+                        sx={{
+                          width: 36,
+                          height: 36,
+                          border: `2px solid ${AVATAR_COLORS[u.role] || "#64748b"}`,
+                        }}
+                      />
+                      <Box>
+                        <Typography variant="body2" sx={{ fontWeight: 600, fontFamily: '"Montserrat", sans-serif' }}>
+                          {u.first_name && u.last_name ? `${u.first_name} ${u.last_name}` : u.username}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">@{u.username}</Typography>
+                      </Box>
                     </Box>
-                  </Box>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="body2">{u.email}</Typography>
-                </TableCell>
-                <TableCell>
-                  <Chip
-                    label={u.role}
-                    size="small"
-                    color={u.role === "ADMIN" ? "error" : u.role === "DOCTOR" ? "primary" : "default"}
-                    sx={{ fontWeight: 600 }}
-                  />
-                </TableCell>
-                <TableCell>
-                  <Chip
-                    label={u.is_email_confirmed ? "Yes" : "No"}
-                    size="small"
-                    color={u.is_email_confirmed ? "success" : "warning"}
-                    variant={u.is_email_confirmed ? "filled" : "outlined"}
-                  />
-                </TableCell>
-                <TableCell>
-                  <Switch checked={u.is_active} onChange={() => handleToggleActive(u)} color="success" size="small" />
-                </TableCell>
-                <TableCell>
-                  {u.role === "DOCTOR" ? (
-                    <Switch checked={!!u.doctor_is_approved} onChange={() => handleToggleApproval(u)} color="primary" size="small" />
-                  ) : (
-                    <Typography variant="body2" color="text.secondary">—</Typography>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
+                  </TableCell>
+                  <TableCell><Typography variant="body2">{u.email}</Typography></TableCell>
+                  <TableCell>
+                    <StatusChip status={u.role} type="availability" />
+                  </TableCell>
+                  <TableCell>
+                    <StatusChip status={u.is_email_confirmed ? "verified" : "unverified"} type="availability" />
+                  </TableCell>
+                  <TableCell>
+                    <Switch checked={u.is_active} onChange={() => handleToggleActive(u)} color="success" size="small" />
+                  </TableCell>
+                  <TableCell>
+                    {u.role === "DOCTOR" ? (
+                      <Switch checked={!!u.doctor_is_approved} onChange={() => handleToggleApproval(u)} color="primary" size="small" />
+                    ) : (
+                      <Typography variant="body2" color="text.secondary">—</Typography>
+                    )}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>

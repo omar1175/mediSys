@@ -1,22 +1,29 @@
 import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { CircularProgress, Box } from "@mui/material";
 
 export default function ProtectedRoute({ children, allowedRoles }) {
   const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const location = useLocation();
 
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   if (!user) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" py={8}>
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", py: 8 }}>
         <CircularProgress />
       </Box>
     );
   }
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    if (user.role === "ADMIN") return <Navigate to="/admin/dashboard" replace />;
-    if (user.role === "DOCTOR") return <Navigate to="/doctor/dashboard" replace />;
-    return <Navigate to="/patient/dashboard" replace />;
+    const roleHome = {
+      ADMIN: "/admin/dashboard",
+      DOCTOR: "/doctor/dashboard",
+      PATIENT: "/patient/dashboard",
+    };
+    const target = roleHome[user.role] || "/patient/dashboard";
+    if (location.pathname !== target) {
+      return <Navigate to={target} replace />;
+    }
   }
   return children;
 }

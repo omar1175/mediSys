@@ -9,5 +9,6 @@ router.register("doctors", views.DoctorProfileViewSet, basename="doctor")
 router.register("availability", views.AvailabilityViewSet, basename="availability")
 
 urlpatterns = [
+    path("stats/", views.platform_stats, name="platform-stats"),
     path("", include(router.urls)),
 ]

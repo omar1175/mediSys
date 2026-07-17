@@ -1,3 +1,62 @@
+/* ==========================================================
+   MediSys — Global Styles (Clinic Template Inspired)
+   ========================================================== */
+
+:root,
+[data-theme="light"] {
+  /* Colors */
+  --accent-color: #175cdd;
+  --accent-light: #4a90e2;
+  --accent-dark: #0f4ba0;
+  --heading-color: #112344;
+  --default-color: #3c4049;
+  --background-color: #f4f8ff;
+  --surface-color: #ffffff;
+  --contrast-color: #ffffff;
+  --light-bg: #f4f8ff;
+  --dark-bg: #021418;
+
+  /* Neutrals */
+  --text-primary: #112344;
+  --text-secondary: #3c4049;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --border-soft: #f1f5f9;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="dark"] {
+  /* Colors */
+  --accent-color: #3b82f6;
+  --accent-light: #60a5fa;
+  --accent-dark: #2563eb;
+  --heading-color: #f1f5f9;
+  --default-color: #9fb0c3;
+  --background-color: #0b1220;
+  --surface-color: #0f1a2e;
+  --contrast-color: #e6edf6;
+  --light-bg: #0f1a2e;
+  --dark-bg: #021418;
+
+  /* Neutrals */
+  --text-primary: #e6edf6;
+  --text-secondary: #9fb0c3;
+  --muted: #7c8aa0;
+  --border: rgba(255, 255, 255, 0.1);
+  --border-soft: rgba(255, 255, 255, 0.06);
+
+  /* Shadows (dark) */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.55);
+  --shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.6);
+}
+
 *,
 *::before,
 *::after {
@@ -6,8 +65,85 @@
   padding: 0;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  color: var(--default-color);
+  background-color: var(--background-color);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Montserrat", sans-serif;
+  color: var(--heading-color);
+  font-weight: 700;
+}
+
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--accent-dark);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--border-soft);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--muted);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-color);
+}
+
+/* Selection */
+::selection {
+  background: rgba(23, 92, 221, 0.15);
+  color: var(--heading-color);
+}
+
+/* Smooth page transitions */
+#root {
+  min-height: 100vh;
+}
+
+/* AOS fade-up default */
+[data-aos] {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Gradient utility classes */
+.gradient-primary {
+  background: linear-gradient(135deg, #175cdd 0%, #4a90e2 100%);
+}
+
+.gradient-dark {
+  background: linear-gradient(135deg, #112344 0%, #1a365d 100%);
+}
+
+/* Consistent card hover effect */
+.template-card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.template-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(23, 92, 221, 0.12);
 }

@@ -91,6 +91,7 @@ class AppointmentViewSet(viewsets.ModelViewSet):
         serializer = AppointmentStatusSerializer(appointment, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
         transaction.on_commit(lambda: emails.send_status_change_email(appointment))
         return Response(AppointmentSerializer(appointment).data)
 

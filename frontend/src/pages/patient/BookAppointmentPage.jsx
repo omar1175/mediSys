@@ -1,19 +1,23 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
-  Box, Typography, Card, CardContent, TextField, Button, MenuItem,
-  Alert, CircularProgress, Grid, Chip,
+  Box, Typography, Card, CardContent, TextField, Button,
+  Alert, CircularProgress, Grid, Container, ToggleButtonGroup, ToggleButton,
 } from "@mui/material";
-import { ArrowBack, Event } from "@mui/icons-material";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
+import { Event, AttachMoney, Star, Videocam, Chat } from "@mui/icons-material";
 import { fetchDoctor } from "../../store/slices/doctorsSlice";
 import { createAppointment, clearAppointmentError, clearAppointmentSuccess } from "../../store/slices/appointmentsSlice";
+import GradientHeader from "../../components/common/GradientHeader";
+import DoctorAvatar from "../../components/common/DoctorAvatar";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
+
+const TYPE_ICONS = {
+  IN_PERSON: <Event />,
+  ONLINE_CHAT: <Chat />,
+  ONLINE_VIDEO: <Videocam />,
+};
 
 export default function BookAppointmentPage() {
   const { id } = useParams();
@@ -21,9 +25,14 @@ export default function BookAppointmentPage() {
   const navigate = useNavigate();
   const { current: doctor, loading: docLoading } = useSelector((s) => s.doctors);
   const { loading, error, success } = useSelector((s) => s.appointments);
-  const { register, handleSubmit, control, formState: { errors } } = useForm({
-    defaultValues: { duration_minutes: 30, notes: "" },
+  const [appointmentType, setAppointmentType] = useState("IN_PERSON");
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    defaultValues: { notes: "" },
   });
+
+  const consultationFee = appointmentType === "IN_PERSON"
+    ? doctor?.consultation_fee
+    : doctor?.online_consultation_fee;
 
   useEffect(() => {
     dispatch(clearAppointmentSuccess());
@@ -43,8 +52,7 @@ export default function BookAppointmentPage() {
   const onSubmit = (data) => {
     dispatch(createAppointment({
       doctor: parseInt(id),
-      scheduled_at: data.scheduled_at.toISOString(),
-      duration_minutes: parseInt(data.duration_minutes),
+      appointment_type: appointmentType,
       notes: data.notes,
     }));
   };
@@ -52,84 +60,145 @@ export default function BookAppointmentPage() {
   if (docLoading || !doctor) return <LoadingSpinner />;
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box>
-        <Button startIcon={<ArrowBack />} onClick={() => navigate(-1)} sx={{ mb: 2 }}>
-          Back
-        </Button>
+    <Box>
+      <GradientHeader
+        title="Request Appointment"
+        subtitle={`with Dr. ${doctor.first_name} ${doctor.last_name} — ${doctor.specialty_detail?.name}`}
+        gradient="blue"
+        showBack
+        onBack={() => navigate(-1)}
+      />
 
-        <Typography variant="h4" gutterBottom>Book Appointment</Typography>
-        <Typography color="text.secondary" mb={3}>
-          with Dr. {doctor.first_name} {doctor.last_name} - {doctor.specialty_detail?.name}
-        </Typography>
+      <Container maxWidth="lg">
+        <Card sx={{ mb: 3, display: "flex", alignItems: "center", gap: 3, p: 3 }} data-aos="fade-up">
+          <DoctorAvatar doctor={doctor} size={80} showStatus />
+          <Box sx={{ flex: 1 }}>
+            <Typography variant="h6" sx={{ fontFamily: '"Montserrat", sans-serif', fontWeight: 700, color: "#112344" }}>
+              Dr. {doctor.first_name} {doctor.last_name}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+              {doctor.specialty_detail?.name}
+            </Typography>
+            <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                <AttachMoney sx={{ fontSize: 16, color: "#175cdd" }} />
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                  ${doctor.consultation_fee} in-person
+                </Typography>
+              </Box>
+              {doctor.online_consultation_fee > 0 && (
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                  <AttachMoney sx={{ fontSize: 16, color: "#10b981" }} />
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                    ${doctor.online_consultation_fee} online
+                  </Typography>
+                </Box>
+              )}
+              <Box sx={{ display: "flex", alignItems: "center", gap: 0.25 }}>
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <Star key={s} sx={{ fontSize: 14, color: s <= Math.round(doctor.rating || 0) ? "#f59e0b" : "#e2e8f0" }} />
+                ))}
+                <Typography variant="caption" sx={{ ml: 0.5, fontWeight: 600 }}>{doctor.rating || "—"}</Typography>
+              </Box>
+            </Box>
+          </Box>
+        </Card>
 
-        {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
+        {success && <Alert severity="success" sx={{ mb: 2, borderRadius: 2 }}>Appointment requested! The doctor will confirm your appointment soon.</Alert>}
         {error && (
-          <Alert severity="error" sx={{ mb: 2 }} onClose={() => dispatch(clearAppointmentError())}>
-            {typeof error === "string" ? error : error.scheduled_at || error.detail || JSON.stringify(error)}
+          <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }} onClose={() => dispatch(clearAppointmentError())}>
+            {typeof error === "string" ? error : error.detail || JSON.stringify(error)}
           </Alert>
         )}
 
-        {doctor.availability && doctor.availability.length > 0 && (
-          <Card sx={{ mb: 3 }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>Available Times</Typography>
-              <Box display="flex" flexWrap="wrap" gap={1}>
-                {doctor.availability.filter(a => a.is_active).map((a) => (
-                  <Chip key={a.id} label={`${["Mon","Tue","Wed","Thu","Fri","Sat","Sun"][a.day_of_week]} ${a.start_time}-${a.end_time}`} variant="outlined" />
-                ))}
-              </Box>
-            </CardContent>
-          </Card>
-        )}
+        <Card sx={{ mb: 3 }} data-aos="fade-up" data-aos-delay="50">
+          <CardContent sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom sx={{ fontFamily: '"Montserrat", sans-serif', fontWeight: 700, color: "#112344" }}>
+              Consultation Type
+            </Typography>
+            <ToggleButtonGroup
+              value={appointmentType}
+              exclusive
+              onChange={(_, val) => val && setAppointmentType(val)}
+              fullWidth
+              sx={{ mb: 2 }}
+            >
+              <ToggleButton value="IN_PERSON" sx={{ textTransform: "none", py: 1.5 }}>
+                <Event sx={{ mr: 1 }} /> In-Person
+                {doctor.consultation_fee > 0 && (
+                  <Typography variant="caption" sx={{ ml: 1, fontWeight: 700, color: "#175cdd" }}>
+                    (${doctor.consultation_fee})
+                  </Typography>
+                )}
+              </ToggleButton>
+              <ToggleButton value="ONLINE_CHAT" sx={{ textTransform: "none", py: 1.5 }}>
+                <Chat sx={{ mr: 1 }} /> Chat
+                {doctor.online_consultation_fee > 0 && (
+                  <Typography variant="caption" sx={{ ml: 1, fontWeight: 700, color: "#10b981" }}>
+                    (${doctor.online_consultation_fee})
+                  </Typography>
+                )}
+              </ToggleButton>
+              <ToggleButton value="ONLINE_VIDEO" sx={{ textTransform: "none", py: 1.5 }}>
+                <Videocam sx={{ mr: 1 }} /> Video
+                {doctor.online_consultation_fee > 0 && (
+                  <Typography variant="caption" sx={{ ml: 1, fontWeight: 700, color: "#10b981" }}>
+                    (${doctor.online_consultation_fee})
+                  </Typography>
+                )}
+              </ToggleButton>
+            </ToggleButtonGroup>
 
-        <Card sx={{ maxWidth: 600 }}>
-          <CardContent>
+            <Box sx={{ p: 2, bgcolor: "#f0f9ff", borderRadius: 2 }}>
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                Fee: <span style={{ color: appointmentType === "IN_PERSON" ? "#175cdd" : "#10b981", fontSize: "1.2rem" }}>
+                  ${consultationFee || 0}
+                </span>
+              </Typography>
+              {appointmentType !== "IN_PERSON" && (
+                <Typography variant="caption" color="text.secondary">
+                  Save ${(doctor.consultation_fee || 0) - (doctor.online_consultation_fee || 0)} with online consultation
+                </Typography>
+              )}
+            </Box>
+          </CardContent>
+        </Card>
+
+        <Alert severity="info" sx={{ mb: 3, borderRadius: 2 }}>
+          After you submit, the doctor will review your request and confirm an appointment time.
+        </Alert>
+
+        <Card sx={{ maxWidth: 600 }} data-aos="fade-up" data-aos-delay="200">
+          <CardContent sx={{ p: 3 }}>
             <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-              <Grid container spacing={2}>
-                <Grid size={{ xs: 12 }}>
-                  <Controller
-                    name="scheduled_at"
-                    control={control}
-                    rules={{ required: "Date and time are required" }}
-                    render={({ field }) => (
-                      <DateTimePicker
-                        label="Appointment Date & Time"
-                        value={field.value}
-                        onChange={field.onChange}
-                        disablePast
-                        slotProps={{
-                          textField: {
-                            fullWidth: true,
-                            error: !!errors.scheduled_at,
-                            helperText: errors.scheduled_at?.message,
-                          },
-                        }}
-                      />
-                    )}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField fullWidth select label="Duration" {...register("duration_minutes", { required: true })}>
-                    <MenuItem value={15}>15 minutes</MenuItem>
-                    <MenuItem value={30}>30 minutes</MenuItem>
-                    <MenuItem value={45}>45 minutes</MenuItem>
-                    <MenuItem value={60}>60 minutes</MenuItem>
-                  </TextField>
-                </Grid>
+              <Grid container spacing={2.5}>
                 <Grid size={{ xs: 12 }}>
                   <TextField fullWidth multiline rows={3} label="Notes (optional)" {...register("notes")} />
                 </Grid>
                 <Grid size={{ xs: 12 }}>
-                  <Button fullWidth variant="contained" type="submit" size="large" disabled={loading}>
-                    {loading ? <CircularProgress size={24} /> : "Book Appointment"}
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    type="submit"
+                    size="large"
+                    disabled={loading}
+                    sx={{
+                      py: 1.5,
+                      fontSize: "1rem",
+                      fontWeight: 700,
+                      textTransform: "none",
+                      borderRadius: 2,
+                      background: "linear-gradient(135deg, #175cdd 0%, #4a90e2 100%)",
+                    }}
+                  >
+                    {loading ? <CircularProgress size={24} color="inherit" /> : "Request Appointment"}
                   </Button>
                 </Grid>
               </Grid>
             </Box>
           </CardContent>
         </Card>
-      </Box>
-    </LocalizationProvider>
+      </Container>
+    </Box>
   );
 }

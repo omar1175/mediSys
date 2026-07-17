@@ -35,6 +35,9 @@ class DoctorProfile(models.Model):
     bio = models.TextField(blank=True)
     phone = models.CharField(max_length=20, blank=True)
     consultation_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    online_consultation_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    rating = models.DecimalField(max_digits=3, decimal_places=1, default=0)
+    years_of_experience = models.PositiveIntegerField(default=0)
     is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 

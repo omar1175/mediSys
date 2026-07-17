@@ -48,12 +48,48 @@ class UsersListView(generics.ListAPIView):
         return qs
 
 
+class PatientSearchView(generics.ListAPIView):
+    """Search patients. Accessible by doctors and admins."""
+
+    serializer_class = CustomUserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role not in ("DOCTOR", "ADMIN"):
+            return User.objects.none()
+
+        qs = User.objects.filter(role="PATIENT").order_by("first_name", "last_name")
+        search = self.request.query_params.get("search")
+        if search:
+            qs = qs.filter(
+                models.Q(username__icontains=search)
+                | models.Q(email__icontains=search)
+                | models.Q(first_name__icontains=search)
+                | models.Q(last_name__icontains=search)
+            )
+        return qs
+
+
 class UserDetailView(generics.RetrieveUpdateAPIView):
     """Retrieve or update a user. Admin only."""
 
     serializer_class = AdminUserSerializer
     permission_classes = [permissions.IsAuthenticated, IsAdminRole]
     queryset = User.objects.all()
+
+
+class PatientDetailView(generics.RetrieveAPIView):
+    """Retrieve a patient's basic info. Accessible by doctors and admins."""
+
+    serializer_class = CustomUserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role not in ("DOCTOR", "ADMIN"):
+            return User.objects.none()
+        return User.objects.filter(role="PATIENT")
 
 
 class RegisterView(generics.CreateAPIView):

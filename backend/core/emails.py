@@ -103,6 +103,55 @@ def send_booking_confirmation_email(appointment):
             logger.exception("Failed to send booking email to doctor %s", doctor.user.email)
 
 
+def send_payment_request_email(payment):
+    """Notify the patient that a doctor has requested a payment."""
+    patient = payment.patient
+    doctor = payment.doctor
+    context = {
+        "payment": payment,
+        "patient": patient,
+        "doctor": doctor,
+        "checkout_url": payment.checkout_url,
+    }
+    text = render_to_string("core/email/payment_request.txt", context)
+    if patient.email:
+        try:
+            _send(
+                subject="Payment requested for your appointment",
+                recipient=patient.email,
+                text_body=text,
+            )
+        except Exception:
+            logger.exception("Failed to send payment request email to patient %s", patient.email)
+
+
+def send_payment_confirmation_email(payment):
+    """Notify the doctor and patient that a payment succeeded."""
+    patient = payment.patient
+    doctor = payment.doctor
+    context = {"payment": payment, "patient": patient, "doctor": doctor}
+    patient_text = render_to_string("core/email/payment_confirmation_patient.txt", context)
+    doctor_text = render_to_string("core/email/payment_confirmation_doctor.txt", context)
+    if patient.email:
+        try:
+            _send(
+                subject="Payment received — thank you",
+                recipient=patient.email,
+                text_body=patient_text,
+            )
+        except Exception:
+            logger.exception("Failed to send payment confirmation to patient %s", patient.email)
+    if doctor.user.email:
+        try:
+            _send(
+                subject="Payment received for an appointment",
+                recipient=doctor.user.email,
+                text_body=doctor_text,
+            )
+        except Exception:
+            logger.exception("Failed to send payment confirmation to doctor %s", doctor.user.email)
+
+
 def send_status_change_email(appointment):
     """Notify the patient and doctor when an appointment status changes."""
     patient = appointment.patient
